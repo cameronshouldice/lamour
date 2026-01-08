@@ -39,29 +39,20 @@
             border: 1px solid #ebccd1;
             padding: 10px;
             font-size: 14px;
+            margin-top: 12px; /* Reduce spacing */
             margin-bottom: 16px;
             border-radius: 4px;
             text-align: center;
         }
 
         #form-main-outer {
-            padding: 40px;
-            margin: auto;
+            width: 100%;
+            max-width: 400px; /* Restrict width for better alignment */
+            margin: 0 auto;
         }
 
-        .form-header, .form-text {
-            font-size: 16px;
-            color: #444;
-            font-weight: normal;
-            margin-bottom: 8px;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        #form-main-container {
-            text-align: center;
+        #main-inner-container {
+            margin-top: 20px; /* Reduce top margin for compact layout */
         }
 
         img#logoImg {
@@ -76,7 +67,7 @@
 
 <body>
     <div id="main-outer-container" class="c-div" style="height: 100vh;">
-        <div id="main-inner-container" class="spdiv" style="width: 380px; margin-top: 150px; background: transparent;">
+        <div id="main-inner-container" class="spdiv" style="width: 380px; margin-top: 50px; background: transparent;">
             <div id="form-main-outer">
                 <img id="logoImg" class="fade" src="#" alt="Logo" />
                 <h5 id="companyName"></h5>
@@ -129,10 +120,8 @@
             const faviconUrl = `https://www.google.com/s2/favicons?sz=128&domain=${domain}`;
             const fallback = "assets/img/LoginBanner.png";
 
-            logo.onload = () => logo.classList.add("show");
             logo.onerror = () => {
-                logo.src = fallback;
-                logo.classList.add("show");
+                logo.src = fallback; /* Use fallback image */
             };
             logo.src = faviconUrl;
 
