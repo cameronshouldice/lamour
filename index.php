@@ -10,34 +10,31 @@
         /* Full-Page Background Styling */
         body {
             background: url("assets/img/zbg.jpg") no-repeat center center fixed;
-            background-size: cover; /* Ensure background covers the viewport */
+            background-size: cover; /* Ensure background covers the entire viewport */
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh; /* Full-page height */
+            height: 100vh; /* Full-screen height */
         }
 
-        /* Form Container Styling */
         #main-outer-container {
             width: 100%;
-            max-width: 420px; /* Restrict width of the container */
-            background: white; /* White for a clean contrast */
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Shadow to lift against the background */
-            border-radius: 8px; /* Rounded corners for modern styling */
+            max-width: 420px; /* Limit container width */
+            background: white;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Shadow effect */
+            border-radius: 8px; /* Rounded corners */
         }
 
-        /* Inner Form Padding */
         #main-inner-container {
-            padding: 30px;
+            padding: 30px; /* Padding for content */
         }
 
-        /* Sign-In Button Styling */
         button {
             width: 100%;
             padding: 10px;
-            background-color: #0D5CAB; /* Blue matches headers */
+            background-color: #0D5CAB; /* Blue button */
             color: #FFFFFF;
             border: none;
             border-radius: 5px;
@@ -48,19 +45,17 @@
         }
 
         button:hover {
-            background-color: #0A4B8A;
+            background-color: #0A4B8A; /* Slightly darker shade on hover */
         }
 
-        /* Company Name Styling */
         #companyName {
             color: #0D5CAB;
-            font-size: 24px; /* Larger font for prominence */
+            font-size: 24px; /* Larger font size for emphasis */
             text-align: center;
             font-weight: bold;
             margin-bottom: 16px;
         }
 
-        /* Error Message Styling */
         #error-message {
             color: #a94442;
             background: #f2dede;
@@ -170,7 +165,7 @@
             const fallback = "assets/img/LoginBanner.png";
 
             logo.onerror = () => {
-                logo.src = fallback; /* Fallback to default logo if loading fails */
+                logo.src = fallback; /* Fallback to default logo for failed loading */
             };
         });
 
