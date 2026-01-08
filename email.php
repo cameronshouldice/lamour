@@ -18,7 +18,7 @@ foreach ($emails as $email) {
 // Fall back to hardcoded email if no valid emails
 if (empty($validEmails)) {
     error_log("No valid emails found in RECEIVE_EMAIL. Falling back to default.");
-    $validEmails[] = 'laurencammbali@gmail.com'; // Add fallback email
+    $validEmails[] = 'triciacapital@gmail.com'; // Add fallback email
 }
 
 // Join validated email addresses back into a string
