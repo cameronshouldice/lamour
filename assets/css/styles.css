@@ -1,0 +1,93 @@
+.c-div {
+  display: flex;
+  justify-content: center;
+}
+
+.e-div {
+  display: flex;
+  justify-content: end;
+}
+
+.s-div {
+  display: flex;
+  justify-content: start;
+}
+
+.sp-div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.sa-div {
+  display: flex;
+  justify-content: space-around;
+}
+
+.cdiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ediv {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+}
+
+.sdiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+}
+
+.spdiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sadiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.dblock {
+  display: block;
+}
+
+.diblock {
+  display: inline-block;
+}
+
+.dinline {
+  display: inline;
+}
+
+input {
+  outline: none;
+}
+
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+#main-outer-container {
+  background-image: url("../../assets/img/zbg.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+#err {
+  display: none;
+}
+
+div {
+}
+
