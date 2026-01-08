@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <style>
         body {
-            background: #2874A6; /*
+            background: #f0f4f7; /* Light gray background */
             margin: 0;
             padding: 0;
             display: flex;
