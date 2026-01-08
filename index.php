@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <style>
         body {
-            background: #f0f4f7; /* Light gray background */
+            background: #2874A6; /*
             margin: 0;
             padding: 0;
             display: flex;
@@ -21,7 +21,7 @@
             width: 100%;
             max-width: 420px; /* Restrict login container width */
             background: white;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Enhanced shadow for depth */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhanced shadow for depth */
             border-radius: 8px; /* Rounded corners */
             overflow: hidden;
         }
@@ -49,10 +49,10 @@
 
         #companyName {
             color: #0D5CAB;
-            font-size: 24px; /* Larger font for prominence */
+            font-size: 28px; /* Larger font for prominence */
             text-align: center;
             font-weight: bold;
-            margin-bottom: 16px; /* Space below heading */
+            margin-bottom: 20px; /* Space below heading */
         }
 
         #error-message {
@@ -64,6 +64,7 @@
             margin-bottom: 16px;
             border-radius: 4px;
             text-align: center;
+            display: none; /* Initially hidden for default state */
         }
 
         img#logoImg {
@@ -71,7 +72,7 @@
             width: auto;
             display: block;
             margin: auto;
-            margin-bottom: 16px; /* Padding below the logo */
+            margin-bottom: 20px; /* Padding below the logo */
         }
 
         input {
@@ -89,14 +90,29 @@
             border: 1px solid #ddd;
             border-radius: 4px;
             margin-top: 12px;
-            margin-bottom: 16px;
+            margin-bottom: 12px; /* Adjusted spacing for tighter layout */
         }
 
         footer {
             text-align: center;
             font-size: 12px;
             color: #555;
-            margin-top: 16px;
+            margin-top: 6px; /* Reduced excess vertical space */
+        }
+
+        @media (max-width: 768px) {
+            /* Responsive styling for smaller screens */
+            #main-inner-container {
+                padding: 20px;
+            }
+
+            #companyName {
+                font-size: 22px; /* Adjust font size for smaller screens */
+            }
+
+            button {
+                font-size: 0.9rem; /* Decrease button size slightly */
+            }
         }
     </style>
 </head>
@@ -114,7 +130,7 @@
                 <h5 id="companyName">GAGECOINC</h5>
 
                 <!-- Error Message -->
-                <div id="error-message" style="display: none;">
+                <div id="error-message">
                     The password is incorrect. Try again with your email password.
                 </div>
 
