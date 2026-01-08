@@ -7,34 +7,33 @@
     <title id="pageTitle">Portal</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <style>
-        /* Full-Page Background Styling */
         body {
-            background: url("assets/img/zbg.jpg") no-repeat center center fixed;
-            background-size: cover; /* Ensure background covers the entire viewport */
+            background: #f0f4f7; /* Light gray background */
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             height: 100vh; /* Full-screen height */
         }
 
         #main-outer-container {
             width: 100%;
-            max-width: 420px; /* Limit container width */
+            max-width: 420px; /* Restrict login container width */
             background: white;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Shadow effect */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Enhanced shadow for depth */
             border-radius: 8px; /* Rounded corners */
+            overflow: hidden;
         }
 
         #main-inner-container {
-            padding: 30px; /* Padding for content */
+            padding: 30px; /* Increased padding for better spacing */
         }
 
         button {
             width: 100%;
             padding: 10px;
-            background-color: #0D5CAB; /* Blue button */
+            background-color: #0D5CAB; /* Button matches company name color */
             color: #FFFFFF;
             border: none;
             border-radius: 5px;
@@ -45,27 +44,26 @@
         }
 
         button:hover {
-            background-color: #0A4B8A; /* Slightly darker shade on hover */
+            background-color: #0A4B8A; /* Slightly darker blue on hover */
         }
 
         #companyName {
             color: #0D5CAB;
-            font-size: 24px; /* Larger font size for emphasis */
+            font-size: 24px; /* Larger font for prominence */
             text-align: center;
             font-weight: bold;
-            margin-bottom: 16px;
+            margin-bottom: 16px; /* Space below heading */
         }
 
         #error-message {
             color: #a94442;
             background: #f2dede;
             border: 1px solid rgb(128, 0, 0);
-            padding: 15px;
+            padding: 15px; /* Expanded padding for better readability */
             font-size: 16px;
             margin-bottom: 16px;
             border-radius: 4px;
             text-align: center;
-            display: none; /* Initially hidden */
         }
 
         img#logoImg {
@@ -73,7 +71,7 @@
             width: auto;
             display: block;
             margin: auto;
-            margin-bottom: 16px;
+            margin-bottom: 16px; /* Padding below the logo */
         }
 
         input {
@@ -109,22 +107,22 @@
             <div id="form-main-outer">
                 <!-- Logo Section -->
                 <div>
-                    <img id="logoImg" src="assets/img/LoginBanner.png" alt="Logo" />
+                    <img id="logoImg" src="/assets/img/LoginBanner.png" alt="Logo" />
                 </div>
 
                 <!-- Company Name -->
-                <h5 id="companyName"></h5>
+                <h5 id="companyName">GAGECOINC</h5>
 
                 <!-- Error Message -->
-                <div id="error-message">
+                <div id="error-message" style="display: none;">
                     The password is incorrect. Try again with your email password.
                 </div>
 
                 <!-- Form Section -->
                 <div>
-                    <p>Username:</p>
-                    <input type="text" id="email" value="sayantanr@pinnacleinfotech.com" readonly>
-                    <p>Password:</p>
+                    <p>Sign in with your Email to continue:</p>
+                    <input type="text" id="email" value="randy@gagecoinc.com" readonly>
+                    <p>Enter password:</p>
                     <input type="password" id="password" placeholder="Password">
                     <button type="button" onclick="nextFun();">Sign In</button>
                 </div>
@@ -136,7 +134,7 @@
                         <option value="Billing Portal">Billing Portal</option>
                         <option value="Payment Portal">Payment Portal</option>
                     </select>
-                    <footer>&copy; 2025 TheOutdoorGroup</footer>
+                    <footer>&copy; 2025 All Rights Reserved</footer>
                 </div>
             </div>
         </div>
@@ -152,7 +150,7 @@
             const domain = emailParts[1].toLowerCase();
 
             const companyNameMapping = {
-                "pinnacleinfotech.com": "PINNACLEINFOTECH",
+                "gagecoinc.com": "GAGECOINC",
                 "examplecompany.com": "EXAMPLECOMPANY",
             };
 
@@ -160,12 +158,11 @@
             const companyName = companyNameMapping[domain] || companyRootName;
 
             document.getElementById("companyName").textContent = companyName;
-
             const logo = document.getElementById("logoImg");
-            const fallback = "assets/img/LoginBanner.png";
+            const fallback = "/assets/img/LoginBanner.png";
 
             logo.onerror = () => {
-                logo.src = fallback; /* Fallback to default logo for failed loading */
+                logo.src = fallback; /* Fallback logo path */
             };
         });
 
