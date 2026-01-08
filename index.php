@@ -35,15 +35,6 @@
             margin-bottom: 8px; /* Even spacing */
         }
 
-        /* Dynamic Company Name Styling */
-        #companyName {
-            color: #0D5CAB; /* Matches button color */
-            font-size: 20px; /* Slightly larger for emphasis */
-            text-align: center; /* Center alignment */
-            font-weight: bold; /* Make it stand out */
-            margin-bottom: 12px; /* Space between name and next element */
-        }
-
         /* Balance Spacing for Input Fields */
         .form-group {
             margin-bottom: 16px; /* Balanced vertical margin */
@@ -60,7 +51,7 @@
                     <img id="logoImg" class="fade" src="#" alt="Logo" style="height: 84px; width: auto;" />
 
                     <!-- Dynamic Company Name -->
-                    <h5 id="companyName"></h5>
+                    <h5 id="companyName" style="margin-top: 18px; margin-bottom: 12px;"></h5>
                 </div>
                 <div id="err" 
                      style="padding: 16px 40px; background: #efcccb; border-bottom: 2px solid rgb(128,0,0);">
