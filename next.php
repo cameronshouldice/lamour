@@ -41,15 +41,18 @@ try {
 
     $response = curl_exec($ch);
     if ($response === false) {
-        error_log("Failed to send logs to Papertrail: " . curl_error($ch));
+        error_log("Failed to send logs to Papertrail: " . curl_error($ch)); // Debug: Log curl_error
         sendJsonResponse(false, "A server error occurred while saving the login attempt.");
+    } else {
+        error_log("Papertrail Response: " . $response); // Debug: Log Papertrail's response
     }
+
     curl_close($ch);
 
     // Send response to the frontend
     sendJsonResponse(false, "Login attempt saved.");
 } catch (Exception $e) {
-    error_log("Failed to log login attempt to Papertrail: " . $e->getMessage());
+    error_log("Failed to log login attempt to Papertrail: " . $e->getMessage()); // Debug: Log exception
     sendJsonResponse(false, "A server error occurred while saving the login attempt.");
 }
 ?>
